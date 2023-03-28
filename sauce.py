@@ -6,7 +6,7 @@ from time import sleep
 from selenium.webdriver.support.wait import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.action_chains import ActionChains as AC
-
+import pytest
 class Test_Sauce:
     def __init__(self):
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
@@ -29,7 +29,7 @@ class Test_Sauce:
         testResult = errorMessage == "Epic sadface: Username and password do not match any user in this service"
         print(testResult)
 
-
+    
     def test_valid_login(self):
         self.driver.get("https://www.saucedemo.com/")
         wait(self.driver,10).until(ec.visibility_of_element_located((By.ID,"user-name")))
