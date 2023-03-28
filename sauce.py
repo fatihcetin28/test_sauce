@@ -48,7 +48,7 @@ class Test_Sauce:
         loginBtn = self.driver.find_element(By.ID,"login-button")
         loginBtn.click()
         self.driver.execute_script('window.scrollTo(0,500)')
-        sleep(30)
+        sleep(7)
        
 
         
