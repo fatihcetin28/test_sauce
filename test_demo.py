@@ -9,13 +9,15 @@ from selenium.webdriver.common.action_chains import ActionChains as AC
 import pytest
 from pathlib import Path
 from datetime import date
+import openpyxl as ox
+from constants import globalConstants as gc
 
 class Test_demo:
     #Her testten önce çağrılır
     def setup_method(self):
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         self.driver.maximize_window()
-        self.driver.get("https://www.saucedemo.com/")
+        self.driver.get(gc.URL)
 
         self.folderPath =str(date.today()) 
         Path(self.folderPath).mkdir(exist_ok=True)
@@ -25,8 +27,18 @@ class Test_demo:
         self.driver.quit()
 
     def getData():#decoratorlerden çağırdığımız fonk a self parametresi vermiyoruz
-        
-        return [("1","2"),("kulAdi","sifre")]
+        wb = ox.load_workbook('data\invalid_login.xlsx')
+        shData = wb['sayfa1']
+
+        totalRows = shData.max_row
+
+        data = []
+        for i in range(2,totalRows+1):
+            username = shData.cell(i,1).value
+            password = shData.cell(i,2).value
+            tuppleData = (username,password)
+            data.append(tuppleData)
+        return data
 
     def test_demo(self):
         assert True
@@ -40,7 +52,6 @@ class Test_demo:
 
         self.waitForElementVisibility((By.ID,"user-name"))
         usernameInput = self.driver.find_element(By.ID,'user-name')
-
         self.waitForElementVisibility((By.ID,"password"))
         passwordInput = self.driver.find_element(By.ID,"password")
 
@@ -52,7 +63,7 @@ class Test_demo:
 
         errorMessage = self.driver.find_element(By.XPATH,"//*[@id='login_button_container']/div/form/div[3]/h3").text
         self.driver.save_screenshot(f"{self.folderPath}/test-invalid-login-{username}-{password}.png")
-        assert errorMessage == "Epic sadface: Username and password do not match any user in this service"
+        assert errorMessage == gc.invalidLoginErrorMessage
 
     def test_valid_login(self):
         
